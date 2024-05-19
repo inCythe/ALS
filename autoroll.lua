@@ -1,7 +1,5 @@
 repeat task.wait() until game:IsLoaded()
 
-wait(2)
-
 local Glitched = "rbxassetid://14857416817"
 local Avatar = "rbxassetid://14857393213"
 local Overlord = "rbxassetid://14857401537"
@@ -43,6 +41,8 @@ while task.wait(0.5) do
         StartAutoReroll = false
         break
     end
+
+    wait(2)
 
     if StartAutoReroll == true then
         local Player = game.Players.LocalPlayer
