@@ -81,9 +81,7 @@ while task.wait(0.5) do
 						})
 					end
 				end
-				KeyPress(Enum.KeyCode.BackSlash)
 				StartAutoReroll = false
-				break
 			end
 		end
 
