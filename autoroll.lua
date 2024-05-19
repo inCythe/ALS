@@ -48,6 +48,7 @@ end
 
 local function KeyPress(keyCode)
 	VIM:SendKeyEvent(true, keyCode, false, game)
+	task.wait()
 	VIM:SendKeyEvent(false, keyCode, false, game)
 end
 
@@ -82,6 +83,7 @@ while task.wait(0.5) do
 					end
 				end
 				StartAutoReroll = false
+				KeyPress(Enum.KeyCode.BackSlash)
 			end
 		end
 
