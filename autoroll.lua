@@ -1,7 +1,7 @@
 repeat task.wait() until game:IsLoaded()
 
 if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false then
-    return
+	return
 end
 
 local Glitched = "rbxassetid://14857416817"
@@ -25,97 +25,83 @@ local Accelerate = "rbxassetid://14857421206"
 local Shining = "rbxassetid://14857422439"
 
 local WantedTechniques = {
-    Glitched,
-    Avatar,
-    Overlord,
-    Shinigami,
-    All_Seeing,
-    Entrepreneur,
+	Glitched,
+	Avatar,
+	Overlord,
+	Shinigami,
+	All_Seeing,
+	Entrepreneur,
 }
 
 StartAutoReroll = true
 
 local vim = game:GetService("VirtualInputManager")
+local UIS = game:GetService("GuiService")
+local RerollButton = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Reroll
+local ConfirmButton = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Confirm.Accept
 
-if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == true then
-    vim:SendKeyEvent(true, Enum.KeyCode.BackSlash , false, game)
-    vim:SendKeyEvent(false, Enum.KeyCode.BackSlash , false, game)
-    vim:SendKeyEvent(true, Enum.KeyCode.Right , false, game)
-    vim:SendKeyEvent(false, Enum.KeyCode.Right , false, game)
-    vim:SendKeyEvent(true, Enum.KeyCode.Down , false, game)
-    vim:SendKeyEvent(false, Enum.KeyCode.Down , false, game)
-    vim:SendKeyEvent(true, Enum.KeyCode.Left , false, game)
-    vim:SendKeyEvent(false, Enum.KeyCode.Left , false, game)
-    vim:SendKeyEvent(true, Enum.KeyCode.Left , false, game)
-    vim:SendKeyEvent(false, Enum.KeyCode.Left , false, game)
+local function selectUIElement(element)
+	if element and element.Selectable then
+		UIS.SelectedObject = element
+	end
+end
+
+local function sendKeyPress(keyCode)
+	vim:SendKeyEvent(true, keyCode, false, game)
+	task.wait()
+	vim:SendKeyEvent(false, keyCode, false, game)
 end
 
 while task.wait(0.5) do
-    if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false then
-        StartAutoReroll = false
-    end
+	if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false then
+		StartAutoReroll = false
+	end
 
-    if game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
-        StartAutoReroll = false
-    end
+	if game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
+		StartAutoReroll = false
+	end
 
-    if StartAutoReroll == false then
-        vim:SendKeyEvent(true, Enum.KeyCode.BackSlash , false, game)
-        vim:SendKeyEvent(false, Enum.KeyCode.BackSlash , false, game)
-        break
-    end
+	if StartAutoReroll == false then
+		vim:SendKeyEvent(true, Enum.KeyCode.BackSlash , false, game)
+		vim:SendKeyEvent(false, Enum.KeyCode.BackSlash , false, game)
+		break
+	end
 
-    if StartAutoReroll == true then
-        local Player = game.Players.LocalPlayer
+	if StartAutoReroll == true then
+		local Player = game.Players.LocalPlayer
 
-        local CurrentTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Icon.Image
-        local GotTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Title.Text
+		local CurrentTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Icon.Image
+		local GotTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Title.Text
 
-        for i, v in pairs(WantedTechniques) do
-            if v == CurrentTechnique then
-                for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Select.ViewportFrame.WorldModel:GetChildren()) do
-                    if v:IsA("Model") then
-                        game:GetService("StarterGui"):SetCore("SendNotification",{
-                            Title = "Reroll Finished",
-                            Text = v.Name.. " Rolled " .. GotTechnique .. "!",
-                        })
-                    end
-                end
-                StartAutoReroll = false
-                break
-            end
-        end
+		for i, v in pairs(WantedTechniques) do
+			if v == CurrentTechnique then
+				for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Select.ViewportFrame.WorldModel:GetChildren()) do
+					if v:IsA("Model") then
+						game:GetService("StarterGui"):SetCore("SendNotification",{
+							Title = "Reroll Finished",
+							Text = v.Name.. " Rolled " .. GotTechnique .. "!",
+						})
+					end
+				end
+				StartAutoReroll = false
+				break
+			end
+		end
 
-        if StartAutoReroll == true then
-            if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == false then
-                vim:SendKeyEvent(true, Enum.KeyCode.Return , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Return , false, game)
-            elseif game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == true then
-                vim:SendKeyEvent(true, Enum.KeyCode.Right , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Right , false, game)
-                vim:SendKeyEvent(true, Enum.KeyCode.Down , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Down , false, game)
-                vim:SendKeyEvent(true, Enum.KeyCode.Left , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Left , false, game)
-                vim:SendKeyEvent(true, Enum.KeyCode.Left , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Left , false, game)
-                vim:SendKeyEvent(true, Enum.KeyCode.Return , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Return , false, game)
-                vim:SendKeyEvent(true, Enum.KeyCode.Right , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Right , false, game)
-                vim:SendKeyEvent(true, Enum.KeyCode.Down , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Down , false, game)
-                vim:SendKeyEvent(true, Enum.KeyCode.Left , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Left , false, game)
-                vim:SendKeyEvent(true, Enum.KeyCode.Left , false, game)
-                vim:SendKeyEvent(false, Enum.KeyCode.Left , false, game)
-            end
-        else
-            wait()
-            break
-        end
-    else
-        wait()
-        break
-    end
+		if StartAutoReroll == true then
+			if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == false then
+				selectUIElement(RerollButton)
+				sendKeyPress(Enum.KeyCode.Return)
+			elseif game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == true then
+				selectUIElement(ConfirmButton)
+				sendKeyPress(Enum.KeyCode.Return)
+			else
+				wait()
+				break
+			end
+		else
+			wait()
+			break
+		end
+	end
 end
