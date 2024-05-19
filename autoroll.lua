@@ -35,21 +35,20 @@ local WantedTechniques = {
 
 StartAutoReroll = true
 
-local vim = game:GetService("VirtualInputManager")
+local VIM = game:GetService("VirtualInputManager")
 local UIS = game:GetService("GuiService")
 local RerollButton = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Reroll
 local ConfirmButton = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Confirm.Accept
 
-local function selectUIElement(element)
+local function Select(element)
 	if element and element.Selectable then
 		UIS.SelectedObject = element
 	end
 end
 
-local function sendKeyPress(keyCode)
-	vim:SendKeyEvent(true, keyCode, false, game)
-	task.wait()
-	vim:SendKeyEvent(false, keyCode, false, game)
+local function KeyPress(keyCode)
+	VIM:SendKeyEvent(true, keyCode, false, game)
+	VIM:SendKeyEvent(false, keyCode, false, game)
 end
 
 while task.wait(0.5) do
@@ -62,8 +61,7 @@ while task.wait(0.5) do
 	end
 
 	if StartAutoReroll == false then
-		vim:SendKeyEvent(true, Enum.KeyCode.BackSlash , false, game)
-		vim:SendKeyEvent(false, Enum.KeyCode.BackSlash , false, game)
+		KeyPress(Enum.KeyCode.BackSlash)
 		break
 	end
 
@@ -90,11 +88,11 @@ while task.wait(0.5) do
 
 		if StartAutoReroll == true then
 			if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == false then
-				selectUIElement(RerollButton)
-				sendKeyPress(Enum.KeyCode.Return)
+				Select(RerollButton)
+				KeyPress(Enum.KeyCode.Return)
 			elseif game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == true then
-				selectUIElement(ConfirmButton)
-				sendKeyPress(Enum.KeyCode.Return)
+				Select(ConfirmButton)
+				KeyPress(Enum.KeyCode.Return)
 			else
 				wait()
 				break
