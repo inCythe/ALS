@@ -49,8 +49,8 @@ while task.wait(0.5) do
                 for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Select.ViewportFrame.WorldModel:GetChildren()) do
                     if v:IsA("Model") then
                         game:GetService("StarterGui"):SetCore("SendNotification",{
-                            Title = "Auto Reroll ALS",
-                            Text = v.Name.. " You got " .. GotTechnique .. "!",
+                            Title = "Reroll Finished",
+                            Text = v.Name.. " Rolled " .. GotTechnique .. "!",
                         })
                     end
                 end
