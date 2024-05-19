@@ -1,5 +1,7 @@
 repeat task.wait() until game:IsLoaded()
 
+wait(2)
+
 local Glitched = "rbxassetid://14857416817"
 local Avatar = "rbxassetid://14857393213"
 local Overlord = "rbxassetid://14857401537"
@@ -32,6 +34,11 @@ local WantedTechniques = {
 StartAutoReroll = true
 
 while task.wait(0.5) do
+    if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false then
+        StartAutoReroll = false
+        break
+    end
+
     if game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
         StartAutoReroll = false
         break
@@ -63,8 +70,8 @@ while task.wait(0.5) do
             if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == false then
                 local part = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Reroll
 
-                local partCenterX = part.AbsolutePosition.X + (part.AbsoluteSize.X / 2)
-                local partCenterY = part.AbsolutePosition.Y + (part.AbsoluteSize.Y /0.7)
+                local partCenterX = part.AbsolutePosition.X + (part.AbsoluteSize.X / 1.50)
+                local partCenterY = part.AbsolutePosition.Y + (part.AbsoluteSize.Y /0.68)
 
                 vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, true, game, 0)
                 vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, false, game, 0)
@@ -72,8 +79,8 @@ while task.wait(0.5) do
             elseif game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == true then
                 local part = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Confirm.Accept
 
-                local partCenterX = part.AbsolutePosition.X + (part.AbsoluteSize.X / 2)
-                local partCenterY = part.AbsolutePosition.Y + (part.AbsoluteSize.Y /0.7)
+                local partCenterX = part.AbsolutePosition.X + (part.AbsoluteSize.X / 1.50)
+                local partCenterY = part.AbsolutePosition.Y + (part.AbsoluteSize.Y /0.68)
 
                 vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, true, game, 0)
                 vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, false, game, 0)
