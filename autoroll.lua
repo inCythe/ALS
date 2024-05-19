@@ -42,8 +42,6 @@ while task.wait(0.5) do
         break
     end
 
-    wait(2)
-
     if StartAutoReroll == true then
         local Player = game.Players.LocalPlayer
         local vim = game:GetService("VirtualInputManager")
