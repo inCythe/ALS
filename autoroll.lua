@@ -29,7 +29,7 @@ local WantedTechniques = {
     Entrepreneur,
 }
 
-getgenv().StartAutoReroll = true
+StartAutoReroll = true
 
 while task.wait(0.5) do
     if game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
