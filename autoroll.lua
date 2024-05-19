@@ -50,7 +50,7 @@ while task.wait(0.5) do
                     if v:IsA("Model") then
                         game:GetService("StarterGui"):SetCore("SendNotification",{
                             Title = "Auto Reroll ALS",
-                            Text = v.Name.. " Already Got " .. CurrentTechnique .. "!",
+                            Text = v.Name.. " You got " .. CurrentTechnique .. "!",
                         })
                     end
                 end
