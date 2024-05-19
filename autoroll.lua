@@ -1,46 +1,43 @@
---[[ rbxassetid://14857396451 -  Scoped 
-     rbxassetid://14857425345 - Sturdy 
-     rbxassetid://14857421206 - Accelerate 
-     rbxassetid://14857422439 - Shining
-      rbxassetid://14857410430 - Edge Eyes
-      rbxassetid://14857415303 - Golden
-      rbxassetid://14857413772 - Hyper speed
-      rbxassetid://14857418354 - Juggernaut
-      rbxassetid://14857412247 - Elemental master
+repeat task.wait() until game:IsLoaded()
 
-    
-      rbxassetid://15110769879 - Vulture
-      rbxassetid://14857403680 - Diamond  
-      rbxassetid://14857423915 - Cosmic
-      rbxassetid://14857390891 - Demi God
-      rbxassetid://14857407287 - All Seeing
-      rbxassetid://14857394535 - Entrepreneur 
-      rbxassetid://14857405207 - Shinigami
-      rbxassetid://14857401537 - Overlord
-      rbxassetid://14857393213 - Avatar
-      rbxassetid://14857416817 - Glitched
-
-
-
-
-      -- replace the rbxassetid to what Technique you want.  
-      For Example: getgenv().WantedTechique = "rbxassetid://14857401537" 
-       and the script will auto roll until get the selected technique u want.
-]]
-
+local Glitched = "rbxassetid://14857416817"
+local Avatar = "rbxassetid://14857393213"
+local Overlord = "rbxassetid://14857401537"
+local Shinigami = "rbxassetid://14857405207"
+local All_Seeing = "rbxassetid://14857407287"
+local Entrepreneur = "rbxassetid://14857394535"
+local Vulture = "rbxassetid://15110769879"
+local Diamond = "rbxassetid://14857403680"
+local Cosmic = "rbxassetid://14857423915"
+local Demi_God = "rbxassetid://14857390891"
+local Edge_Eyes = "rbxassetid://14857410430"
+local Golden = "rbxassetid://14857415303"
+local Hyper_speed = "rbxassetid://14857413772"
+local Juggernaut = "rbxassetid://14857418354"
+local Elemental_master = "rbxassetid://14857412247"
+local Scoped = "rbxassetid://14857396451"
+local Sturdy = "rbxassetid://14857425345"
+local Accelerate = "rbxassetid://14857421206"
+local Shining = "rbxassetid://14857422439"
 
 local WantedTechniques = {
-    "rbxassetid://14857416817", -- Glitched
-    "rbxassetid://14857393213", -- Avatar
-    "rbxassetid://14857401537", -- Overlord
-    "rbxassetid://14857405207", -- Shinigami
-    "rbxassetid://14857407287", -- All Seeing
-    "rbxassetid://14857394535", -- Entrepreneur
+    Glitched,
+    Avatar,
+    Overlord,
+    Shinigami,
+    All_Seeing,
+    Entrepreneur,
+    Sturdy,
 }
 
 getgenv().StartAutoReroll = true
 
 while task.wait(0.5) do
+    if game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
+        StartAutoReroll = false
+        break
+    end
+
     if StartAutoReroll == true then
         local Player = game.Players.LocalPlayer
         local vim = game:GetService("VirtualInputManager")
@@ -53,7 +50,7 @@ while task.wait(0.5) do
                     if v:IsA("Model") then
                         game:GetService("StarterGui"):SetCore("SendNotification",{
                             Title = "Auto Reroll ALS",
-                            Text = v.Name.. " Already Got Wanted Technique",
+                            Text = v.Name.. " Already Got " .. CurrentTechnique .. "!",
                         })
                     end
                 end
