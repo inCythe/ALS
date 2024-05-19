@@ -27,7 +27,6 @@ local WantedTechniques = {
     Shinigami,
     All_Seeing,
     Entrepreneur,
-    Sturdy,
 }
 
 getgenv().StartAutoReroll = true
@@ -43,6 +42,7 @@ while task.wait(0.5) do
         local vim = game:GetService("VirtualInputManager")
 
         local CurrentTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Icon.Image
+        local GotTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Title.Text
 
         for i, v in pairs(WantedTechniques) do
             if v == CurrentTechnique then
@@ -50,7 +50,7 @@ while task.wait(0.5) do
                     if v:IsA("Model") then
                         game:GetService("StarterGui"):SetCore("SendNotification",{
                             Title = "Auto Reroll ALS",
-                            Text = v.Name.. " You got " .. CurrentTechnique .. "!",
+                            Text = v.Name.. " You got " .. GotTechnique .. "!",
                         })
                     end
                 end
