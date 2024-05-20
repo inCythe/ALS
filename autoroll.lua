@@ -48,7 +48,6 @@ end
 
 local function KeyPress(keyCode)
 	VIM:SendKeyEvent(true, keyCode, false, game)
-	task.wait()
 	VIM:SendKeyEvent(false, keyCode, false, game)
 end
 
