@@ -24,7 +24,14 @@ local Sturdy = "rbxassetid://14857425345"
 local Accelerate = "rbxassetid://14857421206"
 local Shining = "rbxassetid://14857422439"
 
-local WantedTechniques = {}
+local WantedTechniques = {
+		Glitched,
+		Avatar,
+		Overlord,
+		Shinigami,
+		AllSeeing,
+		Entrepreneur,
+}
 
 StartAutoReroll = true
 
