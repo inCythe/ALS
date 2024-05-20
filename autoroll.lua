@@ -8,30 +8,23 @@ local Glitched = "rbxassetid://14857416817"
 local Avatar = "rbxassetid://14857393213"
 local Overlord = "rbxassetid://14857401537"
 local Shinigami = "rbxassetid://14857405207"
-local All_Seeing = "rbxassetid://14857407287"
+local AllSeeing = "rbxassetid://14857407287"
 local Entrepreneur = "rbxassetid://14857394535"
 local Vulture = "rbxassetid://15110769879"
 local Diamond = "rbxassetid://14857403680"
 local Cosmic = "rbxassetid://14857423915"
-local Demi_God = "rbxassetid://14857390891"
-local Edge_Eyes = "rbxassetid://14857410430"
+local DemiGod = "rbxassetid://14857390891"
+local EdgeEyes = "rbxassetid://14857410430"
 local Golden = "rbxassetid://14857415303"
-local Hyper_speed = "rbxassetid://14857413772"
+local Hyperspeed = "rbxassetid://14857413772"
 local Juggernaut = "rbxassetid://14857418354"
-local Elemental_master = "rbxassetid://14857412247"
+local Elementalmaster = "rbxassetid://14857412247"
 local Scoped = "rbxassetid://14857396451"
 local Sturdy = "rbxassetid://14857425345"
 local Accelerate = "rbxassetid://14857421206"
 local Shining = "rbxassetid://14857422439"
 
-local WantedTechniques = {
-	Glitched,
-	Avatar,
-	Overlord,
-	Shinigami,
-	All_Seeing,
-	Entrepreneur,
-}
+local WantedTechniques = {}
 
 StartAutoReroll = true
 
