@@ -29,7 +29,6 @@ local WantedTechniques = {
 	Avatar,
 	Overlord,
 	Shinigami,
-	All_Seeing,
 	Entrepreneur,
 }
 
@@ -37,22 +36,8 @@ StartAutoReroll = true
 
 local VIM = game:GetService("VirtualInputManager")
 local UIS = game:GetService("GuiService")
-local RerollButton = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Reroll
-local ConfirmButton = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Confirm.Accept
 
-local function Select(element)
-	if element and element.Selectable then
-		UIS.SelectedObject = element
-	end
-end
-
-local function KeyPress(keyCode)
-	VIM:SendKeyEvent(true, keyCode, false, game)
-	task.wait()
-	VIM:SendKeyEvent(false, keyCode, false, game)
-end
-
-while task.wait(0.5) do
+while task.wait(0.1) do
 	if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false then
 		StartAutoReroll = false
 	end
@@ -62,12 +47,8 @@ while task.wait(0.5) do
 	end
 
 	if StartAutoReroll == false then
-		KeyPress(Enum.KeyCode.BackSlash)
 		break
 	end
-
-	if StartAutoReroll == true then
-		local Player = game.Players.LocalPlayer
 
 		local CurrentTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Icon.Image
 		local GotTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Title.Text
@@ -83,17 +64,26 @@ while task.wait(0.5) do
 					end
 				end
 				StartAutoReroll = false
-				KeyPress(Enum.KeyCode.BackSlash)
 			end
 		end
 
 		if StartAutoReroll == true then
 			if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == false then
-				Select(RerollButton)
-				KeyPress(Enum.KeyCode.Return)
+				local part = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Reroll
+
+                local partCenterX = part.AbsolutePosition.X + (part.AbsoluteSize.X / 1.5)
+                local partCenterY = part.AbsolutePosition.Y + (part.AbsoluteSize.Y /0.68)
+
+                vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, true, game, 0)
+                vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, false, game, 0)
 			elseif game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == true then
-				Select(ConfirmButton)
-				KeyPress(Enum.KeyCode.Return)
+				local part = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Confirm.Accept
+
+                local partCenterX = part.AbsolutePosition.X + (part.AbsoluteSize.X / 1.5)
+                local partCenterY = part.AbsolutePosition.Y + (part.AbsoluteSize.Y /0.68)
+
+                vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, true, game, 0)
+                vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, false, game, 0)
 			else
 				wait()
 				break
