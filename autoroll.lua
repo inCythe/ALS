@@ -55,6 +55,7 @@ end
 while task.wait(0.1) do
 	if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false then
 		StartAutoReroll = false
+		KeyPress(Enum.KeyCode.BackSlash)
 	end
 
 	if game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
@@ -62,7 +63,6 @@ while task.wait(0.1) do
 	end
 
 	if StartAutoReroll == false then
-		KeyPress(Enum.KeyCode.BackSlash)
 		break
 	end
 
@@ -79,11 +79,11 @@ while task.wait(0.1) do
 						game:GetService("StarterGui"):SetCore("SendNotification",{
 							Title = "Reroll Finished",
 							Text = v.Name.. " Rolled " .. GotTechnique .. "!",
+							KeyPress(Enum.KeyCode.BackSlash)
 						})
 					end
 				end
 				StartAutoReroll = false
-				KeyPress(Enum.KeyCode.BackSlash)
 			end
 		end
 
