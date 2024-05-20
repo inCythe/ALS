@@ -74,16 +74,16 @@ while task.wait(0.1) do
                 local partCenterX = part.AbsolutePosition.X + (part.AbsoluteSize.X / 1.5)
                 local partCenterY = part.AbsolutePosition.Y + (part.AbsoluteSize.Y /0.68)
 
-                vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, true, game, 0)
-                vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, false, game, 0)
+                VIM:SendMouseButtonEvent(partCenterX, partCenterY, 0, true, game, 0)
+                VIM:SendMouseButtonEvent(partCenterX, partCenterY, 0, false, game, 0)
 			elseif game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == true then
 				local part = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Confirm.Accept
 
                 local partCenterX = part.AbsolutePosition.X + (part.AbsoluteSize.X / 1.5)
                 local partCenterY = part.AbsolutePosition.Y + (part.AbsoluteSize.Y /0.68)
 
-                vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, true, game, 0)
-                vim:SendMouseButtonEvent(partCenterX, partCenterY, 0, false, game, 0)
+                VIM:SendMouseButtonEvent(partCenterX, partCenterY, 0, true, game, 0)
+                VIM:SendMouseButtonEvent(partCenterX, partCenterY, 0, false, game, 0)
 			else
 				wait()
 				break
