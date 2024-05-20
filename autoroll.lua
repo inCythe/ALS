@@ -52,7 +52,7 @@ local function KeyPress(keyCode)
 	VIM:SendKeyEvent(false, keyCode, false, game)
 end
 
-while task.wait(0.5) do
+while task.wait(0.1) do
 	if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false then
 		StartAutoReroll = false
 	end
