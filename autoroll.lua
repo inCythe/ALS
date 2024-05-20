@@ -25,12 +25,12 @@ local Accelerate = "rbxassetid://14857421206"
 local Shining = "rbxassetid://14857422439"
 
 local WantedTechniques = {
-		Glitched,
-		Avatar,
-		Overlord,
-		Shinigami,
-		AllSeeing,
-		Entrepreneur,
+	Glitched,
+	Avatar,
+	Overlord,
+	Shinigami,
+	AllSeeing,
+	Entrepreneur,
 }
 
 StartAutoReroll = true
