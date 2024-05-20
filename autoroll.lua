@@ -1,6 +1,6 @@
 repeat task.wait() until game:IsLoaded()
 
-if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false then
+if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false or game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
 	return
 end
 
@@ -60,6 +60,7 @@ while task.wait(0.1) do
 
 	if game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
 		StartAutoReroll = false
+		KeyPress(Enum.KeyCode.BackSlash)
 	end
 
 	if StartAutoReroll == false then
