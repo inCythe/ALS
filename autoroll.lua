@@ -45,6 +45,12 @@ local ConfirmButton = QuirksUI.Confirm.Confirm.Accept
 local VIM = game:GetService("VirtualInputManager")
 local UIS = game:GetService("GuiService")
 
+for i, v in pairs(WantedTechniques) do
+	if v == QuirksUI.BG.Technique.Icon.Image then
+		return
+	end
+end
+
 local function Select(element)
 	if element and element.Selectable then
 		UIS.SelectedObject = element
@@ -57,6 +63,7 @@ local function KeyPress(keyCode)
 end
 
 while task.wait(0.1) do
+
 	if QuirksUI.Enabled == false then
 		StartAutoReroll = false
 		KeyPress(Enum.KeyCode.BackSlash)
@@ -71,11 +78,10 @@ while task.wait(0.1) do
 		break
 	end
 
+	local CurrentTechnique = QuirksUI.BG.Technique.Icon.Image
+	local GotTechnique = QuirksUI.BG.Technique.Title.Text
+
 	if StartAutoReroll == true then
-
-		local CurrentTechnique = QuirksUI.BG.Technique.Icon.Image
-		local GotTechnique = QuirksUI.BG.Technique.Title.Text
-
 		for i, v in pairs(WantedTechniques) do
 			if v == CurrentTechnique then
 				for i, v in pairs(QuirksUI.BG.Select.ViewportFrame.WorldModel:GetChildren()) do
@@ -100,7 +106,7 @@ while task.wait(0.1) do
 				KeyPress(Enum.KeyCode.Return)
 			else
 				wait()
-				break
+				break	
 			end
 		else
 			wait()
