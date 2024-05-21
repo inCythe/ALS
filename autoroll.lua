@@ -45,12 +45,6 @@ local ConfirmButton = QuirksUI.Confirm.Confirm.Accept
 local VIM = game:GetService("VirtualInputManager")
 local UIS = game:GetService("GuiService")
 
-for i, v in pairs(WantedTechniques) do
-	if v == QuirksUI.BG.Technique.Icon.Image then
-		return
-	end
-end
-
 local function Select(element)
 	if element and element.Selectable then
 		UIS.SelectedObject = element
@@ -60,6 +54,12 @@ end
 local function KeyPress(keyCode)
 	VIM:SendKeyEvent(true, keyCode, false, game)
 	VIM:SendKeyEvent(false, keyCode, false, game)
+end
+
+for i, v in pairs(WantedTechniques) do
+	if v == QuirksUI.BG.Technique.Icon.Image then
+		return
+	end
 end
 
 while task.wait(0.1) do
