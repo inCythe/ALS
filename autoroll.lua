@@ -1,6 +1,7 @@
 repeat task.wait() until game:IsLoaded()
 
-if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false or game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
+if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false or 
+	game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
 	return
 end
 
