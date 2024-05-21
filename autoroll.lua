@@ -35,10 +35,14 @@ local WantedTechniques = {
 
 StartAutoReroll = true
 
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local QuirksUI = Player.PlayerGui.QuirksUI
+local RerollButton = QuirksUI.BG.Reroll
+local ConfirmButton = QuirksUI.Confirm.Confirm.Accept
+
 local VIM = game:GetService("VirtualInputManager")
 local UIS = game:GetService("GuiService")
-local RerollButton = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Reroll
-local ConfirmButton = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Confirm.Accept
 
 local function Select(element)
 	if element and element.Selectable then
@@ -52,12 +56,12 @@ local function KeyPress(keyCode)
 end
 
 while task.wait(0.1) do
-	if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false then
+	if QuirksUI.Enabled == false then
 		StartAutoReroll = false
 		KeyPress(Enum.KeyCode.BackSlash)
 	end
 
-	if game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
+	if Player.Rerolls.Value == 0 then
 		StartAutoReroll = false
 		KeyPress(Enum.KeyCode.BackSlash)
 	end
@@ -67,14 +71,13 @@ while task.wait(0.1) do
 	end
 
 	if StartAutoReroll == true then
-		local Player = game.Players.LocalPlayer
 
-		local CurrentTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Icon.Image
-		local GotTechnique = game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Technique.Title.Text
+		local CurrentTechnique = QuirksUI.BG.Technique.Icon.Image
+		local GotTechnique = QuirksUI.BG.Technique.Title.Text
 
 		for i, v in pairs(WantedTechniques) do
 			if v == CurrentTechnique then
-				for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.BG.Select.ViewportFrame.WorldModel:GetChildren()) do
+				for i, v in pairs(QuirksUI.BG.Select.ViewportFrame.WorldModel:GetChildren()) do
 					if v:IsA("Model") then
 						game:GetService("StarterGui"):SetCore("SendNotification",{
 							Title = "Reroll Finished",
@@ -88,10 +91,10 @@ while task.wait(0.1) do
 		end
 
 		if StartAutoReroll == true then
-			if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == false then
+			if QuirksUI.Confirm.Visible == false then
 				Select(RerollButton)
 				KeyPress(Enum.KeyCode.Return)
-			elseif game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Confirm.Visible == true then
+			elseif QuirksUI.Confirm.Visible == true then
 				Select(ConfirmButton)
 				KeyPress(Enum.KeyCode.Return)
 			else
