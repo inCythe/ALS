@@ -1,116 +1,209 @@
 repeat task.wait() until game:IsLoaded()
 
-if game:GetService("Players").LocalPlayer.PlayerGui.QuirksUI.Enabled == false or 
-	game:GetService("Players").LocalPlayer.Rerolls.Value == 0 then
-	return
-end
-
-local Glitched = "rbxassetid://14857416817"
-local Avatar = "rbxassetid://14857393213"
-local Overlord = "rbxassetid://14857401537"
-local Shinigami = "rbxassetid://14857405207"
-local AllSeeing = "rbxassetid://14857407287"
-local Entrepreneur = "rbxassetid://14857394535"
-local Vulture = "rbxassetid://15110769879"
-local Diamond = "rbxassetid://14857403680"
-local Cosmic = "rbxassetid://14857423915"
-local DemiGod = "rbxassetid://14857390891"
-local EdgeEyes = "rbxassetid://14857410430"
-local Golden = "rbxassetid://14857415303"
-local HyperSpeed = "rbxassetid://14857413772"
-local Juggernaut = "rbxassetid://14857418354"
-local ElementalMaster = "rbxassetid://14857412247"
-local Scoped = "rbxassetid://14857396451"
-local Sturdy = "rbxassetid://14857425345"
-local Accelerate = "rbxassetid://14857421206"
-local Shining = "rbxassetid://14857422439"
-
-local WantedTechniques = {
-	Glitched,
-	Avatar,
-	Overlord,
-	Shinigami,
-	AllSeeing,
-	Entrepreneur,
-}
-
-StartAutoReroll = true
-
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
-local QuirksUI = Player.PlayerGui.QuirksUI
-local RerollButton = QuirksUI.BG.Reroll
-local ConfirmButton = QuirksUI.Confirm.Confirm.Accept
 
 local VIM = game:GetService("VirtualInputManager")
 local UIS = game:GetService("GuiService")
 
+local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+
+local ALS = Material.Load({
+    Title = "ALS Auto Roll",
+    Style = 1,
+    SizeX = 400,
+    SizeY = 350,
+    Theme = "Dark",
+})
+
+local RerollTab = ALS.New({
+    Title = "Reroll",
+})
+
+local Techniques = {
+    "Glitched",
+    "Avatar",
+    "Overlord",
+    "Shinigami",
+    "AllSeeing",
+    "Entrepreneur",
+    "Vulture",
+    "Diamond",
+    "Cosmic",
+    "DemiGod",
+    "EdgeEyes",
+    "Golden",
+    "HyperSpeed",
+    "Juggernaut",
+    "ElementalMaster",
+    "Scoped",
+    "Sturdy",
+    "Accelerate",
+    "Shining"
+}
+
+local TechniqueIds = {
+    Glitched = "rbxassetid://14857416817",
+    Avatar = "rbxassetid://14857393213",
+    Overlord = "rbxassetid://14857401537",
+    Shinigami = "rbxassetid://14857405207",
+    AllSeeing = "rbxassetid://14857407287",
+    Entrepreneur = "rbxassetid://14857394535",
+    Vulture = "rbxassetid://15110769879",
+    Diamond = "rbxassetid://14857403680",
+    Cosmic = "rbxassetid://14857423915",
+    DemiGod = "rbxassetid://14857390891",
+    EdgeEyes = "rbxassetid://14857410430",
+    Golden = "rbxassetid://14857415303",
+    HyperSpeed = "rbxassetid://14857413772",
+    Juggernaut = "rbxassetid://14857418354",
+    ElementalMaster = "rbxassetid://14857412247",
+    Scoped = "rbxassetid://14857396451",
+    Sturdy = "rbxassetid://14857425345",
+    Accelerate = "rbxassetid://14857421206",
+    Shining = "rbxassetid://14857422439"
+}
+
+local WantedTechniques = {}
+
 local function Select(element)
-	if element and element.Selectable then
-		UIS.SelectedObject = element
-	end
+    if element and element.Selectable then
+        UIS.SelectedObject = element
+    end
 end
 
 local function KeyPress(keyCode)
-	VIM:SendKeyEvent(true, keyCode, false, game)
-	VIM:SendKeyEvent(false, keyCode, false, game)
+    VIM:SendKeyEvent(true, keyCode, false, game)
+    VIM:SendKeyEvent(false, keyCode, false, game)
 end
 
-for i, v in pairs(WantedTechniques) do
-	if v == QuirksUI.BG.Technique.Icon.Image then
-		return
-	end
+local function checkCurrentTechnique()
+    local QuirksUI = Player.PlayerGui.QuirksUI
+    local CurrentTechnique = QuirksUI.BG.Technique.Icon.Image
+
+    for _, v in pairs(WantedTechniques) do
+        if v == CurrentTechnique then
+            return true
+        end
+    end
+    return false
 end
 
-while task.wait(0.1) do
+local AutoRoll = RerollTab.Toggle({
+    Text = "Roll",
+    Callback = function(Value)
+        StartAutoReroll = Value
+        coroutine.wrap(function()
+            if not Player.PlayerGui.QuirksUI.Enabled or Player.Rerolls.Value == 0 then
+                return
+            end
 
-	if QuirksUI.Enabled == false then
-		StartAutoReroll = false
-		KeyPress(Enum.KeyCode.BackSlash)
-	end
+            if checkCurrentTechnique() then
+                return
+            end
 
-	if Player.Rerolls.Value == 0 then
-		StartAutoReroll = false
-		KeyPress(Enum.KeyCode.BackSlash)
-	end
+            while StartAutoReroll do
+                task.wait(0.1)
 
-	if StartAutoReroll == false then
-		break
-	end
+                local QuirksUI = Player.PlayerGui.QuirksUI
+                local RerollButton = QuirksUI.BG.Reroll
+                local ConfirmButton = QuirksUI.Confirm.Confirm.Accept
 
-	local CurrentTechnique = QuirksUI.BG.Technique.Icon.Image
-	local GotTechnique = QuirksUI.BG.Technique.Title.Text
+                if not QuirksUI.Enabled or Player.Rerolls.Value == 0 then
+                    KeyPress(Enum.KeyCode.BackSlash)
+                    return
+                end
 
-	if StartAutoReroll == true then
-		for i, v in pairs(WantedTechniques) do
-			if v == CurrentTechnique then
-				for i, v in pairs(QuirksUI.BG.Select.ViewportFrame.WorldModel:GetChildren()) do
-					if v:IsA("Model") then
-						game:GetService("StarterGui"):SetCore("SendNotification",{
-							Title = "Reroll Finished",
-							Text = v.Name.. " Rolled " .. GotTechnique .. "!",
-							KeyPress(Enum.KeyCode.BackSlash)
-						})
-					end
-				end
-				StartAutoReroll = false
-			end
-		end
+                if not StartAutoReroll then
+                    KeyPress(Enum.KeyCode.BackSlash)
+                    break
+                end
 
-		if StartAutoReroll == true then
-			if QuirksUI.Confirm.Visible == false then
-				Select(RerollButton)
-				KeyPress(Enum.KeyCode.Return)
-			elseif QuirksUI.Confirm.Visible == true then
-				Select(ConfirmButton)
-				KeyPress(Enum.KeyCode.Return)
-			else
-				wait()
-				break	
-			end
-		else
-			wait()
-			break
-		end
-	end
+                local CurrentTechnique = QuirksUI.BG.Technique.Icon.Image
+                local GotTechnique = QuirksUI.BG.Technique.Title.Text
+
+                for _, v in pairs(WantedTechniques) do
+                    if v == CurrentTechnique then
+                        for _, model in pairs(QuirksUI.BG.Select.ViewportFrame.WorldModel:GetChildren()) do
+                            if model:IsA("Model") then
+                                game:GetService("StarterGui"):SetCore("SendNotification", {
+                                    Title = "Reroll Finished",
+                                    Text = model.Name .. " Rolled " .. GotTechnique .. "!",
+                                })
+                            end
+                        end
+                        KeyPress(Enum.KeyCode.BackSlash)
+                        StartAutoReroll = false
+                        return
+                    end
+                end
+
+                if StartAutoReroll then
+                    if not QuirksUI.Confirm.Visible then
+                        Select(RerollButton)
+                        KeyPress(Enum.KeyCode.Return)
+                    elseif QuirksUI.Confirm.Visible then
+                        Select(ConfirmButton)
+                        KeyPress(Enum.KeyCode.Return)
+                    else
+                        task.wait()
+                    end
+                else
+                    task.wait()
+                end
+            end
+        end)()
+    end,
+    Enabled = StartAutoReroll,
+})
+
+local SelectedTraitsLabel = RerollTab.TextField({
+    Text = "None",
+})
+
+local function updateSelectedTraitsLabel()
+    local selectedtraits = {}
+    for _, name in ipairs(Techniques) do
+        if WantedTechniques[name] then
+            table.insert(selectedtraits, name)
+        end
+    end
+    SelectedTraitsLabel:SetText(table.concat(selectedtraits, ", "))
 end
+
+local SelectTrait = RerollTab.Dropdown({
+    Text = "Select Trait",
+    Callback = function(Value)
+        if WantedTechniques[Value] then
+            WantedTechniques[Value] = nil
+        else
+            WantedTechniques[Value] = TechniqueIds[Value]
+        end
+        updateSelectedTraitsLabel()
+    end,
+    Options = Techniques,
+})
+
+local ClearButton = RerollTab.Button({
+    Text = "Clear",
+    Callback = function()
+        WantedTechniques = {}
+        SelectedTraitsLabel:SetText("None")
+    end,
+})
+
+local Codes = RerollTab.Button({
+    Text = "Redeem Codes",
+    Callback = function()
+        pcall(function()
+            local codes = loadstring(game:HttpGet("https://raw.githubusercontent.com/buang5516/buanghub/main/codes.lua"))()
+            if codes then
+                for _, v in pairs(codes) do
+                    pcall(function()
+                        game.ReplicatedStorage.Remotes.ClaimCode:InvokeServer(v)
+                    end)
+                end
+            end
+        end)
+    end,
+})
