@@ -15,9 +15,9 @@ local RollToggle = RerollTab.Toggle({
     Text = "Roll",
     Callback = function(Value)
         if Value then
-        StartAutoReroll = Value
+            StartAutoReroll = true
         else
-            StartAutoReroll = Value
+            StartAutoReroll = false
         end
     end,
     Enabled = false,
@@ -76,5 +76,21 @@ local ClearButton = RerollTab.Button({
     Callback = function()
         WantedTechniques = {}
         SelectedTraitsLabel:SetText("None")
+    end,
+})
+
+local Codes = RerollTab.Button({
+    Text = "Redeem Codes",
+    Callback = function()
+        pcall(function()
+            local codes = loadstring(game:HttpGet("https://raw.githubusercontent.com/buang5516/buanghub/main/codes.lua"))();
+            if codes then
+                for i,v in pairs(codes) do
+                    pcall(function()
+                        game.ReplicatedStorage.Remotes.ClaimCode:InvokeServer(v)
+                    end)
+                end
+            end
+        end)
     end,
 })
