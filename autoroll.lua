@@ -6,40 +6,41 @@ local Player = Players.LocalPlayer
 local VIM = game:GetService("VirtualInputManager")
 local UIS = game:GetService("GuiService")
 
-local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local ALS = Material.Load({
-    Title = "ALS Auto Roll",
-    Style = 1,
-    SizeX = 400,
-    SizeY = 350,
-    Theme = "Dark",
+local ALS = Rayfield:CreateWindow({
+    Name = "ALS Auto Reroll",
+    LoadingTitle = "ALS Auto Reroll [100% Luck Buff]",
+	LoadingSubtitle = "W_W",
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = nil,
+		FileName = "SelectedTraits"
+	}
 })
 
-local RerollTab = ALS.New({
-    Title = "Reroll",
-})
+local RerollTab = ALS:CreateTab("Reroll")
 
 local Techniques = {
     "Glitched",
     "Avatar",
     "Overlord",
     "Shinigami",
-    "AllSeeing",
+    "All Seeing",
     "Entrepreneur",
     "Vulture",
     "Diamond",
     "Cosmic",
-    "DemiGod",
-    "EdgeEyes",
+    "Demi God",
+    "Edge Eyes",
     "Golden",
-    "HyperSpeed",
+    "Hyper Speed",
     "Juggernaut",
-    "ElementalMaster",
+    "Elemental Master",
+	"Shining",
     "Scoped",
     "Sturdy",
-    "Accelerate",
-    "Shining"
+    "Accelerate"
 }
 
 local TechniqueIds = {
@@ -47,21 +48,21 @@ local TechniqueIds = {
     Avatar = "rbxassetid://14857393213",
     Overlord = "rbxassetid://14857401537",
     Shinigami = "rbxassetid://14857405207",
-    AllSeeing = "rbxassetid://14857407287",
+    ['All Seeing'] = "rbxassetid://14857407287",
     Entrepreneur = "rbxassetid://14857394535",
     Vulture = "rbxassetid://15110769879",
     Diamond = "rbxassetid://14857403680",
     Cosmic = "rbxassetid://14857423915",
-    DemiGod = "rbxassetid://14857390891",
-    EdgeEyes = "rbxassetid://14857410430",
+    ["Demi God"] = "rbxassetid://14857390891",
+    ["Edge Eyes"] = "rbxassetid://14857410430",
     Golden = "rbxassetid://14857415303",
-    HyperSpeed = "rbxassetid://14857413772",
+    ["Hyper Speed"] = "rbxassetid://14857413772",
     Juggernaut = "rbxassetid://14857418354",
-    ElementalMaster = "rbxassetid://14857412247",
+    ["Elemental Master"] = "rbxassetid://14857412247",
+	Shining = "rbxassetid://14857422439",
     Scoped = "rbxassetid://14857396451",
     Sturdy = "rbxassetid://14857425345",
-    Accelerate = "rbxassetid://14857421206",
-    Shining = "rbxassetid://14857422439"
+    Accelerate = "rbxassetid://14857421206"
 }
 
 local WantedTechniques = {}
@@ -77,7 +78,7 @@ local function KeyPress(keyCode)
     VIM:SendKeyEvent(false, keyCode, false, game)
 end
 
-local function checkCurrentTechnique()
+local function CheckCurrentTechnique()
     local QuirksUI = Player.PlayerGui.QuirksUI
     local CurrentTechnique = QuirksUI.BG.Technique.Icon.Image
 
@@ -89,8 +90,10 @@ local function checkCurrentTechnique()
     return false
 end
 
-local AutoRoll = RerollTab.Toggle({
-    Text = "Roll",
+local AutoRoll = RerollTab:CreateToggle({
+    Name = "Roll",
+	CurrentValue = false,
+	Flag = "AutoRoll",
     Callback = function(Value)
         StartAutoReroll = Value
         coroutine.wrap(function()
@@ -98,7 +101,7 @@ local AutoRoll = RerollTab.Toggle({
                 return
             end
 
-            if checkCurrentTechnique() then
+            if CheckCurrentTechnique() then
                 return
             end
 
@@ -157,43 +160,44 @@ local AutoRoll = RerollTab.Toggle({
     Enabled = StartAutoReroll,
 })
 
-local SelectedTraitsLabel = RerollTab.TextField({
-    Text = "None",
-})
+local SelectedTraitsLabel = RerollTab:CreateLabel("")
 
-local function updateSelectedTraitsLabel()
+local function UpdateLabel()
     local selectedtraits = {}
     for _, name in ipairs(Techniques) do
         if WantedTechniques[name] then
             table.insert(selectedtraits, name)
         end
     end
-    SelectedTraitsLabel:SetText(table.concat(selectedtraits, ", "))
+    SelectedTraitsLabel:Set(table.concat(selectedtraits, ", "))
 end
 
-local SelectTrait = RerollTab.Dropdown({
-    Text = "Select Trait",
-    Callback = function(Value)
-        if WantedTechniques[Value] then
-            WantedTechniques[Value] = nil
-        else
-            WantedTechniques[Value] = TechniqueIds[Value]
+local SelectTrait = RerollTab:CreateDropdown({
+    Name = "Select Trait",
+    CurrentOption = ({}),
+    Flag = "SelectedTraits",
+    MultipleOptions = true,
+    Callback = function(Options)
+        WantedTechniques = {}
+        for _, Option in ipairs(Options) do
+            WantedTechniques[Option] = TechniqueIds[Option]
         end
-        updateSelectedTraitsLabel()
+        UpdateLabel()
     end,
     Options = Techniques,
 })
 
-local ClearButton = RerollTab.Button({
-    Text = "Clear",
+local ClearButton = RerollTab:CreateButton({
+    Name = "Clear",
     Callback = function()
         WantedTechniques = {}
-        SelectedTraitsLabel:SetText("None")
+		SelectTrait:Set({})
+        SelectedTraitsLabel:Set("")
     end,
 })
 
-local Codes = RerollTab.Button({
-    Text = "Redeem Codes",
+local Codes = RerollTab:CreateButton({
+    Name = "Redeem Codes",
     Callback = function()
         pcall(function()
             local codes = loadstring(game:HttpGet("https://raw.githubusercontent.com/buang5516/buanghub/main/codes.lua"))()
@@ -206,4 +210,11 @@ local Codes = RerollTab.Button({
             end
         end)
     end,
+})
+
+local Close = RerollTab:CreateButton({
+	Name = "Destroy Script",
+	Callback = function()
+		Rayfield:Destroy()
+	end,
 })
