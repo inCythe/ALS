@@ -6,20 +6,26 @@ local Player = Players.LocalPlayer
 local VIM = game:GetService("VirtualInputManager")
 local UIS = game:GetService("GuiService")
 
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
+local SettingsLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/Suricato006/Scripts-Made-by-me/master/Libraries/SaveSettingsLibrary.lua"))()
 
-local ALS = Rayfield:CreateWindow({
-    Name = "ALS Auto Reroll",
-    LoadingTitle = "ALS Auto Reroll [100% Luck Buff]",
-	LoadingSubtitle = "W_W",
-	ConfigurationSaving = {
-		Enabled = true,
-		FolderName = nil,
-		FileName = "SelectedTraits"
-	}
+local FileName = "RerollConfig.JSON"
+local SettingsTable = SettingsLibrary.LoadSettings(FileName)
+
+local ALS = Material.Load({
+    Title = "ALS Auto Roll [100% Luck Buff] ",
+    Style = 1,
+    SizeX = 400,
+    SizeY = 350,
+    Theme = "Dark",
+    ColorOverrides = {
+        MainFrame = Color3.fromRGB(30, 30, 30)
+    }
 })
 
-local RerollTab = ALS:CreateTab("Reroll")
+local RerollTab = ALS.New({
+    Title = "Reroll",
+})
 
 local Techniques = {
     "Glitched",
@@ -65,7 +71,12 @@ local TechniqueIds = {
     Accelerate = "rbxassetid://14857421206"
 }
 
-local WantedTechniques = {}
+local WantedTechniques = SettingsTable.WantedTechniques or {}
+
+local function saveSettings()
+    SettingsTable.WantedTechniques = WantedTechniques
+    SettingsLibrary.SaveSettings(FileName, SettingsTable)
+end
 
 local function Select(element)
     if element and element.Selectable then
@@ -78,7 +89,7 @@ local function KeyPress(keyCode)
     VIM:SendKeyEvent(false, keyCode, false, game)
 end
 
-local function CheckCurrentTechnique()
+local function checkCurrentTechnique()
     local QuirksUI = Player.PlayerGui.QuirksUI
     local CurrentTechnique = QuirksUI.BG.Technique.Icon.Image
 
@@ -90,10 +101,8 @@ local function CheckCurrentTechnique()
     return false
 end
 
-local AutoRoll = RerollTab:CreateToggle({
-    Name = "Roll",
-	CurrentValue = false,
-	Flag = "AutoRoll",
+local AutoRoll = RerollTab.Toggle({
+    Text = "Roll",
     Callback = function(Value)
         StartAutoReroll = Value
         coroutine.wrap(function()
@@ -101,7 +110,7 @@ local AutoRoll = RerollTab:CreateToggle({
                 return
             end
 
-            if CheckCurrentTechnique() then
+            if checkCurrentTechnique() then
                 return
             end
 
@@ -160,44 +169,45 @@ local AutoRoll = RerollTab:CreateToggle({
     Enabled = StartAutoReroll,
 })
 
-local SelectedTraitsLabel = RerollTab:CreateLabel("")
+local SelectedTraitsLabel = RerollTab.TextField({
+    Text = "None",
+})
 
-local function UpdateLabel()
+local function updateSelectedTraitsLabel()
     local selectedtraits = {}
     for _, name in ipairs(Techniques) do
         if WantedTechniques[name] then
             table.insert(selectedtraits, name)
         end
     end
-    SelectedTraitsLabel:Set(table.concat(selectedtraits, ", "))
+    SelectedTraitsLabel:SetText(table.concat(selectedtraits, ", "))
 end
 
-local SelectTrait = RerollTab:CreateDropdown({
-    Name = "Select Trait",
-    CurrentOption = ({}),
-    Flag = "SelectedTraits",
-    MultipleOptions = true,
-    Callback = function(Options)
-        WantedTechniques = {}
-        for _, Option in ipairs(Options) do
-            WantedTechniques[Option] = TechniqueIds[Option]
+local SelectTrait = RerollTab.Dropdown({
+    Text = "Select Trait",
+    Callback = function(Value)
+        if WantedTechniques[Value] then
+            WantedTechniques[Value] = nil
+        else
+            WantedTechniques[Value] = TechniqueIds[Value]
         end
-        UpdateLabel()
+        updateSelectedTraitsLabel()
+        saveSettings()
     end,
     Options = Techniques,
 })
 
-local ClearButton = RerollTab:CreateButton({
-    Name = "Clear",
+local ClearButton = RerollTab.Button({
+    Text = "Clear",
     Callback = function()
         WantedTechniques = {}
-		SelectTrait:Set({})
-        SelectedTraitsLabel:Set("")
+        SelectedTraitsLabel:SetText("None")
+        saveSettings()
     end,
 })
 
-local Codes = RerollTab:CreateButton({
-    Name = "Redeem Codes",
+local Codes = RerollTab.Button({
+    Text = "Redeem Codes",
     Callback = function()
         pcall(function()
             local codes = loadstring(game:HttpGet("https://raw.githubusercontent.com/buang5516/buanghub/main/codes.lua"))()
@@ -212,9 +222,4 @@ local Codes = RerollTab:CreateButton({
     end,
 })
 
-local Close = RerollTab:CreateButton({
-	Name = "Destroy Script",
-	Callback = function()
-		Rayfield:Destroy()
-	end,
-})
+updateSelectedTraitsLabel()
