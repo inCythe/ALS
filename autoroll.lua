@@ -223,5 +223,3 @@ local Codes = RerollTab.Button({
 })
 
 updateSelectedTraitsLabel()
-
-print("Reroll Loaded!")
