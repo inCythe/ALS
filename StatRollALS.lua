@@ -102,6 +102,13 @@ local function RerollStats(UseNormalCube)
 		if not (PerfectStatCube and UsePerfectStatCube) then
 			return false
 		end
+		-- Check if the stat to reroll has a wanted grade
+		for _, StatData in ipairs(Stats) do
+			if StatData.Name == StatToReroll and HasWantedGrade(StatData.Stat, StatData.Name) then
+				print("Stat " .. StatToReroll .. " already has a wanted grade. Stopping perfect cube rerolls.")
+				return false
+			end
+		end
 		ReplicatedStorage.Remotes.RerollStats:FireServer(UnitId, StatToReroll)
 		PerfectStatCubeCount = PerfectStatCubeCount + 1
 	end
@@ -124,7 +131,7 @@ local function ShowResults()
 end
 
 local function Main()
-	while StatRerollGui.Enabled and task.wait(0.5) do
+	while StatRerollGui.Enabled and task.wait(0.3) do
 		local MeetsMinimum = MeetsMinGradeCount()
 
 		local AllStatsDesired = true
@@ -142,12 +149,13 @@ local function Main()
 			break
 		elseif MeetsMinimum and not AllStatsDesired then
 			if not RerollStats(false) then
-				print("No Perfect Stat Cubes remaining.")
+				print("No more stats to reroll or no Perfect Stat Cubes remaining.")
 				break
 			end
 		elseif not RerollStats(UseNormal) then
 			if not UseNormal and UsePerfectStatCube and PerfectStatCube then
 				if not RerollStats(false) then
+					print("No more stats to reroll or no Perfect Stat Cubes remaining.")
 					break
 				end
 			else
