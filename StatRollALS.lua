@@ -26,6 +26,13 @@ local PerfectStatCube = Items:FindFirstChild("PerfectStatCube")
 
 local StatCubeCount, PerfectStatCubeCount = 0, 0
 
+getgenv().UseNormalStatCube = getgenv().UseNormalStatCube
+getgenv().UsePerfectStatCube = getgenv().UsePerfectStatCube
+getgenv().AcceptLowerGrades = getgenv().AcceptLowerGrades
+
+getgenv().WantedGrades = getgenv().WantedGrades
+getgenv().MinGradeCount = getgenv().MinGradeCount
+
 local function HasWantedGrade(Stat, StatName)
 	return table.find(getgenv().WantedGrades[StatName], Stat.Grade.ContentText) ~= nil
 end
