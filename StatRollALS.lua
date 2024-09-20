@@ -26,28 +26,27 @@ local PerfectStatCube = Items:FindFirstChild("PerfectStatCube")
 
 local StatCubeCount, PerfectStatCubeCount = 0, 0
 
-getgenv().UseNormalStatCube = getgenv().UseNormalStatCube ~= nil and getgenv().UseNormalStatCube or true
-getgenv().UsePerfectStatCube = getgenv().UsePerfectStatCube ~= nil and getgenv().UsePerfectStatCube or true
-getgenv().AcceptLowerGrades = getgenv().AcceptLowerGrades ~= nil and getgenv().AcceptLowerGrades or true
+local UseNormalStatCube = getgenv().UseNormalStatCube ~= nil and getgenv().UseNormalStatCube or true
+local UsePerfectStatCube = getgenv().UsePerfectStatCube ~= nil and getgenv().UsePerfectStatCube or true
+local AcceptLowerGrades = getgenv().AcceptLowerGrades ~= nil and getgenv().AcceptLowerGrades or true
 
-getgenv().WantedGrades = getgenv().WantedGrades
+local WantedGrades = getgenv().WantedGrades
 	or {
 		Damage = { "SSS", "SS", "S+", "S", "S-" },
 		Range = { "SSS", "SS", "S+", "S", "S-" },
 		Speed = { "SSS", "SS", "S+", "S", "S-" },
 	}
 
-getgenv().MinGradeCount = getgenv().MinGradeCount
-	or {
-		["SSS"] = 1,
-		["SS"] = 1,
-		["S+"] = 2,
-		["S"] = 2,
-		["S-"] = 2,
-	}
+local MinGradeCount = getgenv().MinGradeCount or {
+	["SSS"] = 1,
+	["SS"] = 1,
+	["S+"] = 2,
+	["S"] = 2,
+	["S-"] = 2,
+}
 
 local function HasWantedGrade(Stat, StatName)
-	return table.find(getgenv().WantedGrades[StatName], Stat.Grade.ContentText) ~= nil
+	return table.find(WantedGrades[StatName], Stat.Grade.ContentText) ~= nil
 end
 
 local function MeetsMinGradeCount()
@@ -58,14 +57,14 @@ local function MeetsMinGradeCount()
 		GradeCount[Grade] = (GradeCount[Grade] or 0) + 1
 	end
 
-	for Grade, MinCount in pairs(getgenv().MinGradeCount) do
+	for Grade, MinCount in pairs(MinGradeCount) do
 		local ActualCount = 0
 		for _, StatData in ipairs(Stats) do
 			if
 				StatData.Stat.Grade.ContentText == Grade
 				or (
-					getgenv().AcceptLowerGrades
-					and table.find(getgenv().WantedGrades[StatData.Name], StatData.Stat.Grade.ContentText) ~= nil
+					AcceptLowerGrades
+					and table.find(WantedGrades[StatData.Name], StatData.Stat.Grade.ContentText) ~= nil
 				)
 			then
 				ActualCount = ActualCount + 1
@@ -90,7 +89,7 @@ end
 
 local function RerollStats(UseNormalCube)
 	if UseNormalCube then
-		if not (StatCube and getgenv().UseNormalStatCube) then
+		if not (StatCube and UseNormalStatCube) then
 			return false
 		end
 		ReplicatedStorage.Remotes.RerollStats:FireServer(UnitId)
@@ -100,7 +99,7 @@ local function RerollStats(UseNormalCube)
 		if not StatToReroll then
 			return false
 		end
-		if not (PerfectStatCube and getgenv().UsePerfectStatCube) then
+		if not (PerfectStatCube and UsePerfectStatCube) then
 			return false
 		end
 		ReplicatedStorage.Remotes.RerollStats:FireServer(UnitId, StatToReroll)
@@ -128,15 +127,28 @@ local function Main()
 	while StatRerollGui.Enabled do
 		local MeetsMinimum = MeetsMinGradeCount()
 
-		local UseNormal = getgenv().UseNormalStatCube and StatCube and not MeetsMinimum
+		local AllStatsDesired = true
+		for _, StatData in ipairs(Stats) do
+			if not HasWantedGrade(StatData.Stat, StatData.Name) then
+				AllStatsDesired = false
+				break
+			end
+		end
 
-		if MeetsMinimum then
-			print("Desired stats achieved!")
-			UseNormal = false
+		local UseNormal = UseNormalStatCube and StatCube and not MeetsMinimum
+
+		if MeetsMinimum and not AllStatsDesired then
+			if not RerollStats(false) then
+				print("No Perfect Stat Cubes remaining.")
+				break
+			end
+		elseif MeetsMinimum and AllStatsDesired then
+			print("All desired stats achieved!")
+			break
 		end
 
 		if not RerollStats(UseNormal) then
-			if not UseNormal and getgenv().UsePerfectStatCube and PerfectStatCube then
+			if not UseNormal and UsePerfectStatCube and PerfectStatCube then
 				if not RerollStats(false) then
 					break
 				end
