@@ -71,12 +71,12 @@ local function MeetsMinGradeCount()
 				ActualCount = ActualCount + 1
 			end
 		end
-		if ActualCount < MinCount then
-			return false
+		if ActualCount >= MinCount then
+			return true
 		end
 	end
 
-	return true
+	return false
 end
 
 local function GetStatToReroll()
@@ -128,11 +128,11 @@ local function Main()
 	while StatRerollGui.Enabled do
 		local MeetsMinimum = MeetsMinGradeCount()
 
-		local UseNormal = getgenv().UseNormalStatCube and StatCube
+		local UseNormal = getgenv().UseNormalStatCube and StatCube and not MeetsMinimum
 
 		if MeetsMinimum then
 			print("Desired stats achieved!")
-			UseNormal = false
+			break
 		end
 
 		if not RerollStats(UseNormal) then
