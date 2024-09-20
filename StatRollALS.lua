@@ -131,7 +131,7 @@ local function ShowResults()
 end
 
 local function Main()
-	while StatRerollGui.Enabled and task.wait(0.3) do
+	while StatRerollGui.Enabled and task.wait(1) do
 		local MeetsMinimum = MeetsMinGradeCount()
 
 		local AllStatsDesired = true
