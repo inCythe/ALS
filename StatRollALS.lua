@@ -26,26 +26,6 @@ local PerfectStatCube = Items:FindFirstChild("PerfectStatCube")
 
 local StatCubeCount, PerfectStatCubeCount = 0, 0
 
-getgenv().UseNormalStatCube = getgenv().UseNormalStatCube ~= nil and getgenv().UseNormalStatCube or true
-getgenv().UsePerfectStatCube = getgenv().UsePerfectStatCube ~= nil and getgenv().UsePerfectStatCube or true
-getgenv().AcceptLowerGrades = getgenv().AcceptLowerGrades ~= nil and getgenv().AcceptLowerGrades or true
-
-getgenv().WantedGrades = getgenv().WantedGrades
-	or {
-		Damage = { "SSS", "SS", "S+", "S", "S-" },
-		Range = { "SSS", "SS", "S+", "S", "S-" },
-		Speed = { "SSS", "SS", "S+", "S", "S-" },
-	}
-
-getgenv().MinGradeCount = getgenv().MinGradeCount
-	or {
-		["SSS"] = 1,
-		["SS"] = 2,
-		["S+"] = 2,
-		["S"] = 2,
-		["S-"] = 2,
-	}
-
 local function HasWantedGrade(Stat, StatName)
 	return table.find(getgenv().WantedGrades[StatName], Stat.Grade.ContentText) ~= nil
 end
