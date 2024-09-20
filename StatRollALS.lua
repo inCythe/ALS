@@ -132,7 +132,7 @@ local function Main()
 
 		if MeetsMinimum then
 			print("Desired stats achieved!")
-			break
+			UseNormal = false
 		end
 
 		if not RerollStats(UseNormal) then
