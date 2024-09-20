@@ -155,7 +155,7 @@ local function Main()
 			end
 		end
 
-		task.wait(0.5)
+		task.wait()
 	end
 
 	ShowResults()
