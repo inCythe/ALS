@@ -26,9 +26,9 @@ local PerfectStatCube = Items:FindFirstChild("PerfectStatCube")
 
 local StatCubeCount, PerfectStatCubeCount = 0, 0
 
-getgenv().UseNormalStatCube = getgenv().UseNormalStatCube ~= nil and getgenv().UseNormalStatCube or true
-getgenv().UsePerfectStatCube = getgenv().UsePerfectStatCube ~= nil and getgenv().UsePerfectStatCube or true
-getgenv().AcceptLowerGrades = getgenv().AcceptLowerGrades ~= nil and getgenv().AcceptLowerGrades or true
+getgenv().UseNormalStatCube = getgenv().UseNormalStatCube or true
+getgenv().UsePerfectStatCube = getgenv().UsePerfectStatCube or true
+getgenv().AcceptLowerGrades = getgenv().AcceptLowerGrades or true
 
 getgenv().WantedGrades = getgenv().WantedGrades
 	or {
