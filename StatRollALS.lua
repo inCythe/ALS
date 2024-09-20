@@ -137,17 +137,15 @@ local function Main()
 
 		local UseNormal = UseNormalStatCube and StatCube and not MeetsMinimum
 
-		if MeetsMinimum and not AllStatsDesired then
+		if MeetsMinimum and AllStatsDesired then
+			print("All desired stats achieved!")
+			break
+		elseif MeetsMinimum and not AllStatsDesired then
 			if not RerollStats(false) then
 				print("No Perfect Stat Cubes remaining.")
 				break
 			end
-		elseif MeetsMinimum and AllStatsDesired then
-			print("All desired stats achieved!")
-			break
-		end
-
-		if not RerollStats(UseNormal) then
+		elseif not RerollStats(UseNormal) then
 			if not UseNormal and UsePerfectStatCube and PerfectStatCube then
 				if not RerollStats(false) then
 					break
