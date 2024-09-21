@@ -1,11 +1,8 @@
--- ALS Auto Stat Roll Script
-
--- Wait until the game is fully loaded
+-- ALS Auto Stat Roll
 repeat
 	task.wait()
 until game:IsLoaded()
 
--- Services and player setup
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -14,29 +11,25 @@ local PlayerGui = Player:WaitForChild("PlayerGui")
 local StatRerollGui = PlayerGui:WaitForChild("StatReroll")
 local ItemsGui = PlayerGui:WaitForChild("Items")
 
--- Stat setup
 local Stats = {
 	{ Name = "Damage", Stat = StatRerollGui.BG.Content.Stats.Damage },
 	{ Name = "Range", Stat = StatRerollGui.BG.Content.Stats.Range },
 	{ Name = "Speed", Stat = StatRerollGui.BG.Content.Stats.Speed },
 }
 
--- Unit info
 local UnitId = StatRerollGui.BG.Content.Unit.Selection:GetAttribute("UnitID", false)
 local UnitName = StatRerollGui.BG.Content.Unit.Selection:GetAttribute("Unit", false)
 
--- Item setup (Stat Cubes)
 local Items = ItemsGui.BG.Items
 local StatCube = Items:FindFirstChild("StatCube")
 local PerfectStatCube = Items:FindFirstChild("PerfectStatCube")
+
 local StatCubeCount, PerfectStatCubeCount = 0, 0
 
--- Configuration options
 local UseNormalStatCube = getgenv().UseNormalStatCube ~= nil and getgenv().UseNormalStatCube or true
 local UsePerfectStatCube = getgenv().UsePerfectStatCube ~= nil and getgenv().UsePerfectStatCube or true
 local AcceptLowerGrades = getgenv().AcceptLowerGrades ~= nil and getgenv().AcceptLowerGrades or true
 
--- Wanted grades per stat
 local WantedGrades = getgenv().WantedGrades
 	or {
 		Damage = { "SSS", "SS", "S+", "S", "S-" },
@@ -44,7 +37,6 @@ local WantedGrades = getgenv().WantedGrades
 		Speed = { "SSS", "SS", "S+", "S", "S-" },
 	}
 
--- Minimum grade count for each stat
 local MinGradeCount = getgenv().MinGradeCount or {
 	["SSS"] = 1,
 	["SS"] = 1,
@@ -53,22 +45,18 @@ local MinGradeCount = getgenv().MinGradeCount or {
 	["S-"] = 2,
 }
 
--- Check if a stat has the Wanted grade
 local function HasWantedGrade(Stat, StatName)
 	return table.find(WantedGrades[StatName], Stat.Grade.ContentText) ~= nil
 end
 
--- Check if the minimum required number of grades is met
 local function MeetsMinGradeCount()
 	local GradeCount = {}
 
-	-- Count the occurrences of each grade
 	for _, StatData in ipairs(Stats) do
 		local Grade = StatData.Stat.Grade.ContentText
 		GradeCount[Grade] = (GradeCount[Grade] or 0) + 1
 	end
 
-	-- Check if the minimum counts are met
 	for Grade, MinCount in pairs(MinGradeCount) do
 		local ActualCount = 0
 		for _, StatData in ipairs(Stats) do
@@ -90,7 +78,6 @@ local function MeetsMinGradeCount()
 	return false
 end
 
--- Determine which stat to reroll
 local function GetStatToReroll()
 	for _, StatData in ipairs(Stats) do
 		if not HasWantedGrade(StatData.Stat, StatData.Name) then
@@ -100,17 +87,14 @@ local function GetStatToReroll()
 	return nil
 end
 
--- Perform stat rerolling based on cube type
-local function RerollStats(Cube)
-	if Cube == "Normal" then
-		-- Use normal cube
+local function RerollStats(UseNormalCube)
+	if UseNormalCube then
 		if not (StatCube and UseNormalStatCube) then
 			return false
 		end
 		ReplicatedStorage.Remotes.RerollStats:FireServer(UnitId)
 		StatCubeCount = StatCubeCount + 1
-	elseif Cube == "Perfect" then
-		-- Use perfect cube
+	else
 		local StatToReroll = GetStatToReroll()
 		if not StatToReroll then
 			return false
@@ -118,9 +102,9 @@ local function RerollStats(Cube)
 		if not (PerfectStatCube and UsePerfectStatCube) then
 			return false
 		end
-		-- Check if reroll is necessary
 		for _, StatData in ipairs(Stats) do
 			if StatData.Name == StatToReroll and HasWantedGrade(StatData.Stat, StatData.Name) then
+				print("Stat " .. StatToReroll .. " already has a wanted grade. Stopping perfect cube rerolls.")
 				return false
 			end
 		end
@@ -130,46 +114,47 @@ local function RerollStats(Cube)
 	return true
 end
 
--- Display final results after rerolling
 local function ShowResults()
-	print(string.rep("=", 40))
+	print("======================================")
 	print("Unit: " .. UnitName)
-	print(string.rep("=", 40))
+	print("======================================")
 	print("Final Stats:")
 	for _, StatData in ipairs(Stats) do
 		print(string.format("  %s: %s", StatData.Name, StatData.Stat.Grade.ContentText))
 	end
-	print(string.rep("=", 40))
+	print("======================================")
 	print("Cubes Used:")
 	print("  Stat Cubes: " .. StatCubeCount)
 	print("  Perfect Stat Cubes: " .. PerfectStatCubeCount)
-	print(string.rep("=", 40))
+	print("======================================\n\n\n")
 end
 
--- Main rerolling process
 local function Main()
 	while StatRerollGui.Enabled do
-		if
-			MeetsMinGradeCount()
-			and not (function()
-				for _, StatData in ipairs(Stats) do
-					if not HasWantedGrade(StatData.Stat, StatData.Name) then
-						return false
-					end
-				end
-				return true
-			end)()
-		then
+		local MeetsMinimum = MeetsMinGradeCount()
+
+		local AllStatsDesired = true
+		for _, StatData in ipairs(Stats) do
+			if not HasWantedGrade(StatData.Stat, StatData.Name) then
+				AllStatsDesired = false
+				break
+			end
+		end
+
+		if MeetsMinimum and AllStatsDesired then
+			print("All desired stats achieved!")
 			break
 		end
 
-		-- Determine and pass the appropriate cube type
-		if UseNormalStatCube and StatCube and not MeetsMinGradeCount() then
-			if not RerollStats("Normal") then
-				break
-			end
-		else
-			if not RerollStats("Perfect") then
+		local UseNormal = UseNormalStatCube and StatCube and not MeetsMinimum
+
+		if not RerollStats(UseNormal) then
+			if not UseNormal and UsePerfectStatCube and PerfectStatCube then
+				if not RerollStats(false) then
+					print("No more stats to reroll or no Perfect Stat Cubes remaining.")
+					break
+				end
+			else
 				break
 			end
 		end
