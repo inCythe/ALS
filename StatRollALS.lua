@@ -182,17 +182,20 @@ local function Main()
 		if AllStatsHaveWantedGrades() then
 			break
 		end
-		if not MeetsMinGradeCount() then
-			if not RollStats("Normal") then
-				break
-			end
-		else
+
+		if MeetsMinGradeCount() then
 			if not RollStats("Perfect") then
 				break
 			end
+		else
+			if not RollStats("Normal") then
+				break
+			end
 		end
+
 		task.wait(0.5)
 	end
+
 	PrintResults()
 end
 
