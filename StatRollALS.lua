@@ -6,18 +6,20 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Player = Players.LocalPlayer
+
 local PlayerGui = Player:WaitForChild("PlayerGui")
+
 local StatRerollGui = PlayerGui:WaitForChild("StatReroll")
 local ItemsGui = PlayerGui:WaitForChild("Items")
 
+-- Stats
 local Stats = {
 	{ Name = "Damage", Instance = StatRerollGui.BG.Content.Stats.Damage },
 	{ Name = "Range", Instance = StatRerollGui.BG.Content.Stats.Range },
 	{ Name = "Speed", Instance = StatRerollGui.BG.Content.Stats.Speed },
 }
 
-local UnitId = StatRerollGui.BG.Content.Unit.Selection:GetAttribute("UnitID", false)
-local UnitName = StatRerollGui.BG.Content.Unit.Selection:GetAttribute("Unit", false)
+local UnitId = StatRerollGui.BG.Content.Unit.Selection:GetAttribute("UnitID")
 
 local Items = ItemsGui.BG.Items
 local StatCube = Items:FindFirstChild("StatCube")
@@ -25,9 +27,25 @@ local PerfectStatCube = Items:FindFirstChild("PerfectStatCube")
 
 local StatCubeCount, PerfectStatCubeCount = 0, 0
 
-local UseNormalStatCube = getgenv().UseNormalStatCube ~= nil and getgenv().UseNormalStatCube or true
-local UsePerfectStatCube = getgenv().UsePerfectStatCube ~= nil and getgenv().UsePerfectStatCube or true
-local AcceptLowerGrades = getgenv().AcceptLowerGrades ~= nil and getgenv().AcceptLowerGrades or true
+-- Grade Index
+local GradeValues = {
+	["SSS"] = 11,
+	["SS"] = 10,
+	["S+"] = 9,
+	["S"] = 8,
+	["S-"] = 7,
+	["A+"] = 6,
+	["A"] = 5,
+	["A-"] = 4,
+	["B"] = 3,
+	["C+"] = 2,
+	["C"] = 1,
+	["C-"] = 0,
+}
+
+-- Configs
+local UseNormalStatCube = type(getgenv().UseNormalStatCube) == nil and getgenv().UseNormalStatCube or true
+local UsePerfectStatCube = type(getgenv().UsePerfectStatCube) == nil and getgenv().UsePerfectStatCube or true
 
 local WantedGrades = getgenv().WantedGrades
 	or {
@@ -44,151 +62,135 @@ local MinGradeCount = getgenv().MinGradeCount or {
 	["S-"] = 2,
 }
 
+-- Get Current Grades
 local function CurrentGrades()
 	local CurrentGrade = {}
 	for _, Stat in ipairs(Stats) do
-		if Stat.Instance then
+		if Stat.Instance and Stat.Instance:FindFirstChild("Grade") then
 			CurrentGrade[Stat.Name] = Stat.Instance.Grade.ContentText
 		end
 	end
 	return CurrentGrade
 end
 
-local function HasWantedGrade()
-	local Results = {}
-	local CurrentGradesTable = CurrentGrades()
-
-	for StatName, WantedGradesList in pairs(WantedGrades) do
-		Results[StatName] = false
-		local CurrentGradeValue = CurrentGradesTable[StatName]
-
-		if CurrentGradeValue then
-			for _, WantedGrade in ipairs(WantedGradesList) do
-				if CurrentGradeValue == WantedGrade then
-					Results[StatName] = true
-					break
-				end
-			end
-		end
-	end
-
-	return Results
+-- Comapare Grades
+local function CompareGrades(Grade1, Grade2)
+	local Value1 = GradeValues[Grade1] or -1
+	local Value2 = GradeValues[Grade2] or -1
+	return Value1 >= Value2
 end
 
+-- Checks if Current Grade meets Min Grade Req
+local function GradeMeetsMin(CurrentGrade, MinGrade)
+	return CompareGrades(CurrentGrade, MinGrade)
+end
+
+-- Checks if Current Grade meets Min Grade Count
 local function MeetsMinGradeCount()
-	local CurrentGradeCounts = CurrentGrades()
-	local GradeCounts = {}
+	local CurrentGradesTable = CurrentGrades()
+	local HighGradeCount = 0
 
-	for _, Stat in ipairs(Stats) do
-		local CurrentGrade = CurrentGradeCounts[Stat.Name]
-		if CurrentGrade then
-			GradeCounts[CurrentGrade] = (GradeCounts[CurrentGrade] or 0) + 1
-		end
-	end
-
-	local function GradeMeetsRequirement(Grade, MinCount)
+	for MinGrade, RequiredCount in pairs(MinGradeCount) do
 		local Count = 0
-
-		if GradeCounts[Grade] then
-			Count = Count + GradeCounts[Grade]
-		end
-
-		if AcceptLowerGrades then
-			local FoundCurrentGrade = false
-			for _, WantedGrade in ipairs(WantedGrades[Grade] or {}) do
-				if not FoundCurrentGrade then
-					if WantedGrade == Grade then
-						FoundCurrentGrade = true
-					end
-				elseif GradeCounts[WantedGrade] then
-					Count = Count + GradeCounts[WantedGrade]
-				end
-
-				if Count >= MinCount then
-					return true
-				end
+		for _, Grade in pairs(CurrentGradesTable) do
+			if GradeMeetsMin(Grade, MinGrade) then
+				Count = Count + 1
 			end
 		end
-
-		return Count >= MinCount
-	end
-
-	for Grade, MinCount in pairs(MinGradeCount) do
-		if not GradeMeetsRequirement(Grade, MinCount) then
-			return false
+		if Count >= RequiredCount then
+			HighGradeCount = HighGradeCount + 1
 		end
 	end
 
-	return true
+	return HighGradeCount > 0
 end
 
+-- Check if a Stat has Wanted Grade
+local function HasWantedGrade(StatName, CurrentGrade)
+	if not WantedGrades[StatName] or not CurrentGrade then
+		return false
+	end
+
+	for _, WantedGrade in ipairs(WantedGrades[StatName]) do
+		if GradeMeetsMin(CurrentGrade, WantedGrade) then
+			return true
+		end
+	end
+	return false
+end
+
+-- Get the Stat that needs rerolling
 local function StatToReroll()
-	for _, Stat in ipairs(Stats) do
-		if not HasWantedGrade()[Stat.Name] then
-			return Stat.Name
+	local CurrentGradesTable = CurrentGrades()
+	local WorstStat = nil
+	local WorstValue = math.huge
+
+	for StatName, CurrentGrade in pairs(CurrentGradesTable) do
+		if not HasWantedGrade(StatName, CurrentGrade) then
+			local Value = GradeValues[CurrentGrade] or -1
+			if Value < WorstValue then
+				WorstValue = Value
+				WorstStat = StatName
+			end
 		end
 	end
-	return nil
+
+	return WorstStat
 end
 
-local function RollStats(Type)
+-- Roll Stats
+local function RollStats(Type, StatToReroll)
 	if Type == "Normal" then
 		if not (StatCube and UseNormalStatCube) then
 			return false
 		end
-		ReplicatedStorage.Remotes.RerollStats:FireServer(UnitId)
-		StatCubeCount = StatCubeCount + 1
-		return true
-	elseif Type == "Perfect" then
-		local StatToReroll = StatToReroll()
-		if not StatToReroll then
+		if MeetsMinGradeCount() then
 			return false
 		end
+
+		ReplicatedStorage.Remotes.RerollStats:FireServer(UnitId)
+		StatCubeCount = StatCubeCount + 1
+		print("Using Normal Cube")
+		return true
+	elseif Type == "Perfect" then
 		if not (PerfectStatCube and UsePerfectStatCube) then
 			return false
 		end
-		ReplicatedStorage.Remotes.RerollStats:FireServer(UnitId, StatToReroll)
-		PerfectStatCubeCount = PerfectStatCubeCount + 1
-		return true
-	else
-		return false
-	end
-end
-
-local function PrintResults()
-	print(string.rep("=", 40))
-	print("Unit:" .. UnitName)
-	print(string.rep("=", 40))
-	for _, Stat in ipairs(Stats) do
-		local Grade = CurrentGrades()[Stat.Name]
-		print(Stat.Name .. ": " .. Grade)
-	end
-	print(string.rep("=", 40))
-	print("Meets Requirements:", MeetsMinGradeCount())
-	print(string.rep("=", 40))
-end
-
-local function AllStatsHaveWantedGrades()
-	for _, result in pairs(HasWantedGrade()) do
-		if not result then
+		if not StatToReroll then
 			return false
 		end
+		if not MeetsMinGradeCount() then
+			return false
+		end
+
+		ReplicatedStorage.Remotes.RerollStats:FireServer(UnitId, StatToReroll)
+		PerfectStatCubeCount = PerfectStatCubeCount + 1
+		print("Using Perfect Cube on: " .. StatToReroll)
+		return true
 	end
-	return true
+	return false
 end
 
+-- Main loop
 local function Main()
+	print("Starting reroll process...")
+
 	while StatRerollGui.Enabled do
-		if AllStatsHaveWantedGrades() then
+		if not UnitId then
 			break
 		end
 
-		if MeetsMinGradeCount() then
-			if not RollStats("Perfect") then
+		if not MeetsMinGradeCount() then
+			if not RollStats("Normal") then
 				break
 			end
 		else
-			if not RollStats("Normal") then
+			local RerollStat = StatToReroll()
+			if not RerollStat then
+				print("All Stats meet requirements")
+				break
+			end
+			if not RollStats("Perfect", RerollStat) then
 				break
 			end
 		end
@@ -196,7 +198,20 @@ local function Main()
 		task.wait(0.5)
 	end
 
-	PrintResults()
+	-- Print final results
+	print("===================")
+	print("  FINAL RESULTS")
+	print("===================")
+	print("Normal Cubes: " .. StatCubeCount)
+	print("Perfect Cubes: " .. PerfectStatCubeCount)
+	print("-------------------")
+
+	local CurrentGradesTable = CurrentGrades()
+	print("Final Grades:")
+	print("DMG: " .. (CurrentGradesTable["Damage"] or "N/A"))
+	print("RNG: " .. (CurrentGradesTable["Range"] or "N/A"))
+	print("SPD: " .. (CurrentGradesTable["Speed"] or "N/A"))
+	print("===================\n")
 end
 
 Main()
